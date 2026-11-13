@@ -1,0 +1,179 @@
+{
+  "scenario_id": "GEO-001",
+  "control": "Purpose limitation gate on all reads of precise geolocation",
+  "tested_at": "2026-11-13T14:41:17.048780+00:00",
+  "tested_by": "Claude (local sandbox run, requested by Grace Adjeli)",
+  "conditions": {
+    "commit": "acdc20d0efe86f363190175ba0ac1ad39b5ef4e7",
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v445-x86_64-with-glibc2.39",
+    "environment": "local",
+    "data": "synthetic records only; fixed clock 2026-11-13T12:00Z for time-based tests",
+    "ci_run": "not a CI run",
+    "ci_attempt": "n/a"
+  },
+  "results": {
+    "design": "pass",
+    "implementation": "pass",
+    "operation": "pass"
+  },
+  "test_count": 25,
+  "tests": [
+    {
+      "test": "test_design_policy_names_data_class_and_purposes",
+      "result": "pass"
+    },
+    {
+      "test": "test_design_marketing_is_not_a_permitted_purpose",
+      "result": "pass"
+    },
+    {
+      "test": "test_design_default_is_deny",
+      "result": "pass"
+    },
+    {
+      "test": "test_implementation_read_calls_gate",
+      "result": "pass"
+    },
+    {
+      "test": "test_implementation_no_public_path_to_raw_records",
+      "result": "pass"
+    },
+    {
+      "test": "test_implementation_gate_uses_exact_match",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_permitted_purpose_allowed",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_use_beyond_permitted_purpose_blocked[marketing]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_use_beyond_permitted_purpose_blocked[analytics]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_use_beyond_permitted_purpose_blocked[ad_targeting]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[None]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[Navigation]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[ navigation]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[navigation ]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_missing_or_spoofed_purpose_blocked[navigation;marketing]",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_expired_consent_blocked",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_no_consent_for_purpose_blocked",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_every_decision_is_logged",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_stream_is_fixed_and_mixed",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_gate_on_has_zero_leaks_and_no_over_blocks",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_defective_fixture_leaks",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_no_control_leaks_everything_it_should_refuse",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_chain_verifies_and_detects_tampering",
+      "result": "pass"
+    },
+    {
+      "test": "test_operation_sim_is_deterministic",
+      "result": "pass"
+    }
+  ],
+  "outcome": {
+    "inherent": {
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "band": "Critical"
+    },
+    "residual_if_tested": {
+      "likelihood": 2,
+      "impact": 5,
+      "score": 10,
+      "band": "Medium",
+      "rationale": "All three dimensions passed with current evidence: likelihood reduced by 2 levels."
+    },
+    "residual_if_untested": {
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "band": "Critical",
+      "rationale": "No evidence: control untested, residual equals inherent."
+    },
+    "rule": "Likelihood drops 2 levels (floor 1) only if design, implementation and operation tests all pass and the evidence is under 90 days old. Otherwise residual equals inherent.",
+    "note": "Illustrative ratings. The reduction rule is a recorded judgment, not a derived value. The risk owner decides treat, monitor or accept."
+  },
+  "simulation": {
+    "description": "Fixed stream of 32 synthetic read requests (8 purposes x 4 consent states), run with the gate, a deliberately defective fixture, and no control. Leak = allowed although it should have been refused.",
+    "results": {
+      "gate_on": {
+        "requests": 32,
+        "allowed": 3,
+        "blocked": 29,
+        "leaks": 0,
+        "over_blocks": 0,
+        "chain_verified": true,
+        "chain_head": "a4207e0499afedd3aa02806fbb3d4da29b8cb07af6004ea7c7b19f76953db72b"
+      },
+      "defective_fixture": {
+        "requests": 32,
+        "allowed": 16,
+        "blocked": 16,
+        "leaks": 13,
+        "over_blocks": 0,
+        "chain_verified": true,
+        "chain_head": "81c24185fd7c5ea1c8e64279f249c50f50d03c3fd0b470ed681b90debb878705"
+      },
+      "no_control": {
+        "requests": 32,
+        "allowed": 32,
+        "blocked": 0,
+        "leaks": 29,
+        "over_blocks": 0,
+        "chain_verified": true,
+        "chain_head": "d364cd97c0f2bac29d5bc4120f29e26b9ff631b0962cab9873ee562984fe938d"
+      }
+    }
+  }
+}
