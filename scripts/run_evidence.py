@@ -33,7 +33,7 @@ def main():
                           cwd=ROOT, text=True, capture_output=True)
     import xml.etree.ElementTree as ET
     cases = ET.parse(ROOT / ".junit.xml").getroot().iter("testcase")
-    results, detail = {"design": [], "implementation": [], "operation": []}, []
+    results, detail = {"design": [], "implementation": [], "operation": [], "recovery": []}, []
     for c in cases:
         name = c.get("name")
         dim = name.split("_")[1]
