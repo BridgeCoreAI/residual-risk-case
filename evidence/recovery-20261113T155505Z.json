@@ -1,0 +1,57 @@
+{
+  "claim": {
+    "id": "GEO-001-CLAIM-1",
+    "statement": "The purpose limitation gate reduces GEO-001 residual risk to 10 (Medium).",
+    "condition": "Fixed synthetic stream of 32 requests, zero leaks and zero over-blocks.",
+    "stream_size": 32
+  },
+  "final_state": "RESTORED_BOUNDED",
+  "ledger_verified": true,
+  "ledger": [
+    {
+      "event": "claim_invalidated",
+      "state": "INVALIDATED",
+      "claim": "GEO-001-CLAIM-1",
+      "at": "2026-11-13T15:55:05.629469+00:00",
+      "leaks": 13,
+      "requests": 32,
+      "defective_sha256": "00b063ec6ab9b1783f5e349b4a3191bc844f8c380e957e719b692cdd4910c7d7",
+      "chain_head": "81c24185fd7c5ea1c8e64279f249c50f50d03c3fd0b470ed681b90debb878705",
+      "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "8e9a7298b083c3c31ec1594e4923a16cf43fbdde529b479de4ff95e9eec80e0b"
+    },
+    {
+      "event": "correction_recorded",
+      "state": "CORRECTED_PENDING_RETEST",
+      "claim": "GEO-001-CLAIM-1",
+      "at": "2026-11-13T15:55:05.629501+00:00",
+      "corrected_sha256": "dec5c6511f631d3b390d0e4341425bdb14f9fcdc3046bab2be3b16dbcf7ce36b",
+      "prev": "8e9a7298b083c3c31ec1594e4923a16cf43fbdde529b479de4ff95e9eec80e0b",
+      "hash": "549b0fc0ed5b51b63b22d32ff82d11a0ffa45118c71a6ac044bc4f6a394e80a6"
+    },
+    {
+      "event": "retest_passed",
+      "state": "PENDING_REVIEW",
+      "claim": "GEO-001-CLAIM-1",
+      "at": "2026-11-13T15:55:05.853382+00:00",
+      "leaks": 0,
+      "over_blocks": 0,
+      "requests": 32,
+      "chain_head": "a4207e0499afedd3aa02806fbb3d4da29b8cb07af6004ea7c7b19f76953db72b",
+      "corrected_sha256": "dec5c6511f631d3b390d0e4341425bdb14f9fcdc3046bab2be3b16dbcf7ce36b",
+      "prev": "549b0fc0ed5b51b63b22d32ff82d11a0ffa45118c71a6ac044bc4f6a394e80a6",
+      "hash": "b1c49d1f689563b962c72a25141aaabc4fcbcc4f6c3d93863a584937b61d15fa"
+    },
+    {
+      "event": "claim_restored_bounded",
+      "state": "RESTORED_BOUNDED",
+      "claim": "GEO-001-CLAIM-1",
+      "at": "2026-11-13T15:55:05.853394+00:00",
+      "reviewer": "risk-owner",
+      "bounds": "Restores only the recorded claim. It does not authorize any future read; each read needs its own gate decision.",
+      "prev": "b1c49d1f689563b962c72a25141aaabc4fcbcc4f6c3d93863a584937b61d15fa",
+      "hash": "851986cc32c60597f7940695dffc325745cebc6fba9d789233d78d3998ba4d6e"
+    }
+  ],
+  "note": "Synthetic, single process. The reviewer is a simulated role, not an authenticated identity. The defective fixture is an educational example, not a real incident."
+}

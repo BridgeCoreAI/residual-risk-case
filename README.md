@@ -53,8 +53,19 @@ Each run writes a hash-chained decision log; altering one entry breaks verificat
 ## Evidence record
 `scripts/run_evidence.py` writes `evidence/evidence-<timestamp>.json` plus a `.manifest.json` holding its SHA256, and records commit, CI run id and attempt, Python version, test results by dimension, the simulation results, and the rating outcome. CI runs on Python 3.10 and 3.12.
 
+## Recovery after a defective control
+
+A control claim should not stay valid because it once passed. `src/recovery.py` records what happens when it fails and how it is restored, in four steps:
+
+1. **Invalidated.** The defective fixture leaks (13 of 32 requests), so the claim "residual risk is 10 (Medium)" is invalidated and bound to the SHA256 of the defective source.
+2. **Corrected, pending retest.** The corrected source is recorded with its own SHA256 and must differ from the defective one.
+3. **Pending review.** The same 32-request stream and the same corrected version are retested, and the regression suite must pass. A different version, a different condition, a failed regression or a new failure stops it.
+4. **Restored, bounded.** A designated reviewer restores only the recorded claim. Restoration does not authorize any future read; each read still needs its own gate decision.
+
+`python scripts/run_recovery.py` runs the sequence and writes a hash-chained ledger (`evidence/recovery-<timestamp>.json`) with a SHA256 manifest. The reviewer is a simulated role name, not an authenticated identity.
+
 ## Negative check
-Weakening the gate (removing the permitted-purpose check) makes the operation tests fail and the residual stays 20. The rating cannot improve without passing evidence.
+Weakening the gate (removing the permitted-purpose check) makes the operation tests fail and the residual stays 20. The recovery tests also cover premature restoration, a wrong reviewer, a wrong version, a wrong condition and a new failure. The rating cannot improve without passing evidence.
 
 ## Limits
 The simulation covers scenarios written for this gate; it does not measure how often real misuse occurs, so it supports the effectiveness rating but cannot set likelihood. Single process, synthetic data, trusted inputs (purpose, consent, clock), in-memory logs, and no independent assurance.
