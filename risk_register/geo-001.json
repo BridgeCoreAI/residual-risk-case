@@ -1,0 +1,15 @@
+{
+  "id": "GEO-001",
+  "scenario": "Precise geolocation data collected for navigation is used for a purpose the user did not consent to (for example marketing).",
+  "affected": "Users of the location feature",
+  "owner": "Risk owner (to be named)",
+  "inherent": { "likelihood": 4, "impact": 5, "rationale": "Location data is available to several services and attractive for secondary use. Impact is severe for regulatory exposure and user harm." },
+  "control": {
+    "name": "Purpose limitation gate on all reads of precise geolocation",
+    "type": "preventive",
+    "implementation": "src/purpose_gate.py",
+    "tests": "tests/test_control.py"
+  },
+  "tolerance": "Medium or below without owner sign-off",
+  "reassess_on": ["New data source", "Model update", "Changed permissions", "New integration", "New use case", "Failed test or incident"]
+}

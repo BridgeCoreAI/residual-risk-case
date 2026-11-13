@@ -1,0 +1,4 @@
+__pycache__/
+.pytest_cache/
+.junit.xml
+.pytest_report.json
