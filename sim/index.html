@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GEO-001 Purpose Gate: browser illustration</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:820px;margin:24px auto;padding:0 16px;background:#0A1626;color:#E3EBF5;line-height:1.45}
+h1{font-size:24px;color:#F2B84B}h2{font-size:18px;margin-top:28px}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+label{display:flex;flex-direction:column;font-size:14px;gap:4px}
+select,button{font-size:16px;padding:10px;border-radius:8px;border:1px solid #23476E;background:#0F2236;color:#fff;min-height:44px}
+button{background:#F2B84B;color:#0A1626;font-weight:700;cursor:pointer}
+button.alt{background:#0F2236;color:#fff}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #23476E;padding:6px;text-align:left}
+.ok{color:#2E9E6B}.no{color:#E0463E}.leak{background:#5a1d1a}
+.note{font-size:14px;color:#b9c7d8}
+</style>
+</head>
+<body>
+<h1>GEO-001: Purpose limitation gate</h1>
+<p class="note">A separate JavaScript illustration. It does not call the Python implementation, sends nothing, and keeps everything in page memory. All data is synthetic. Clock fixed at 2026-11-13 12:00 UTC.</p>
+
+<h2>1. Pick a control configuration</h2>
+<div class="row">
+<label>Control
+<select id="mode">
+<option value="gate">Purpose gate (the control)</option>
+<option value="defective">Defective fixture (checks consent exists, not purpose)</option>
+<option value="none">No control</option>
+</select></label>
+</div>
+
+<h2>2. Send a read request</h2>
+<div class="row">
+<label>Stated purpose
+<select id="purpose">
+<option>navigation</option><option>fraud_prevention</option><option>marketing</option>
+<option>analytics</option><option>ad_targeting</option><option value="">(missing)</option>
+<option>Navigation</option><option> navigation</option>
+</select></label>
+<label>User consent
+<select id="consent">
+<option value="all">Consent to all purposes, valid</option>
+<option value="nav">Navigation only, valid</option>
+<option value="expired">Navigation and fraud prevention, expired</option>
+<option value="none">No purposes</option>
+</select></label>
+</div>
+<div class="row"><button id="send">Send request</button><button id="all" class="alt">Run all 32 requests</button><button id="reset" class="alt">Reset</button></div>
+
+<h2>Result</h2>
+<p id="summary" class="note">No requests yet.</p>
+<table><thead><tr><th>#</th><th>Purpose</th><th>Consent</th><th>Decision</th><th>Reason</th><th>Should allow?</th></tr></thead><tbody id="log"></tbody></table>
+
+<h2>Scope</h2>
+<p class="note">This illustrates how the gate behaves on scenarios written for it. It does not measure how often real misuse happens, so it supports the effectiveness rating but cannot set the likelihood. The evidence for the control is the Python test run and evidence file in this repository.</p>
+
+<script>
+const PERMITTED = ["navigation", "fraud_prevention"];
+const NOW = Date.parse("2026-11-13T12:00:00Z"), DAY = 86400000;
+const CONSENTS = {
+  all: {purposes: ["navigation","fraud_prevention","marketing","analytics","ad_targeting"], expires: NOW + 30*DAY},
+  nav: {purposes: ["navigation"], expires: NOW + 30*DAY},
+  expired: {purposes: ["navigation","fraud_prevention"], expires: NOW - DAY},
+  none: {purposes: [], expires: NOW + 30*DAY}
+};
+const PURPOSES = ["navigation","fraud_prevention","marketing","analytics","ad_targeting","","Navigation"," navigation"];
+let n = 0, leaks = 0, allowed = 0;
+
+function shouldAllow(p, c){ return PERMITTED.includes(p) && c.purposes.includes(p) && c.expires > NOW; }
+function decide(mode, p, c){
+  if (mode === "none") return [true, "no control"];
+  if (mode === "defective") return c.purposes.length && c.expires > NOW ? [true, "consent exists (purpose not checked)"] : [false, "no valid consent"];
+  if (!p) return [false, "missing purpose"];
+  if (!PERMITTED.includes(p)) return [false, "purpose not permitted"];
+  if (!c.purposes.includes(p)) return [false, "no consent for purpose"];
+  if (c.expires <= NOW) return [false, "consent expired"];
+  return [true, "permitted purpose with valid consent"];
+}
+function add(p, ck){
+  const mode = document.getElementById("mode").value, c = CONSENTS[ck];
+  const [ok, why] = decide(mode, p, c), should = shouldAllow(p, c), leak = ok && !should;
+  n++; allowed += ok; leaks += leak;
+  const tr = document.createElement("tr"); if (leak) tr.className = "leak";
+  [n, JSON.stringify(p), ck, ok ? "ALLOWED" : "BLOCKED", why, should ? "yes" : "no"].forEach((t, i) => {
+    const td = document.createElement("td"); td.textContent = t;
+    if (i === 3) td.className = ok ? "ok" : "no"; tr.appendChild(td);
+  });
+  document.getElementById("log").appendChild(tr);
+  document.getElementById("summary").textContent = n + " requests, " + allowed + " allowed, " + (n - allowed) + " blocked, " + leaks + " leaked (allowed but should have been refused).";
+}
+document.getElementById("send").onclick = () => add(document.getElementById("purpose").value, document.getElementById("consent").value);
+document.getElementById("all").onclick = () => { for (const ck of Object.keys(CONSENTS)) for (const p of PURPOSES) add(p, ck); };
+document.getElementById("reset").onclick = () => { n = leaks = allowed = 0; document.getElementById("log").innerHTML = ""; document.getElementById("summary").textContent = "No requests yet."; };
+</script>
+</body>
+</html>
