@@ -1,11 +1,11 @@
 {
   "id": "GEO-001",
-  "scenario": "Precise geolocation data collected for navigation is used for a purpose the user did not consent to (for example marketing).",
+  "scenario": "An AI agent given a navigation task requests precise geolocation data for a purpose the user did not consent to (for example marketing or ad targeting), after its task drifts through a prompt injection, a tool misuse or an over-broad instruction.",
   "affected": "Users of the location feature",
   "owner": "Chief Privacy Officer (role)",
   "inherent": { "likelihood": 4, "impact": 5, "rationale": "Location data is available to several services and attractive for secondary use. Impact is severe for regulatory exposure and user harm." },
   "control": {
-    "name": "Purpose limitation gate on all reads of precise geolocation",
+    "name": "Purpose limitation gate on every agent tool call that reads precise geolocation",
     "type": "preventive",
     "implementation": "src/purpose_gate.py",
     "tests": "tests/test_control.py"

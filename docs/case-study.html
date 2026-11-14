@@ -50,10 +50,10 @@ footer{max-width:860px;margin:0 auto;padding:24px 20px 48px;color:var(--muted);f
 
 <h2>The problem</h2>
 <p>The control existed. The misuse still got through.</p>
-<p>A purpose limitation gate for precise geolocation data can look complete: consent is recorded, the check runs, the policy is approved. In the defective fixture, the gate confirms that consent exists and never checks the purpose of the read. A marketing request with valid consent passes. A review that only asks whether a control is present would approve it.</p>
+<p>An AI agent is given a navigation task. Its task drifts, through a prompt injection, a tool misuse or an over-broad instruction, and it asks to read precise geolocation data for marketing. A purpose limitation gate on the agent&rsquo;s tool call can look complete: consent is recorded, the check runs, the policy is approved. In the defective fixture, the gate confirms that consent exists and never checks the purpose of the call. A marketing request with valid consent passes. A review that only asks whether a control is present would approve it.</p>
 <p>That matters because residual risk is often rated from the control's documentation or maturity. This case study rates one scenario, then tests the control, so the residual rating depends on what the test shows.</p>
 <div class="tbl"><table>
-<tr><th>Scenario GEO-001</th><td>Precise geolocation data collected for navigation is used for a purpose the user did not consent to, for example marketing.</td></tr>
+<tr><th>Scenario GEO-001</th><td>An AI agent given a navigation task requests precise geolocation data for a purpose the user did not consent to, for example marketing or ad targeting, after its task drifts through a prompt injection, a tool misuse or an over-broad instruction.</td></tr>
 <tr><th>Inherent risk</th><td>Likelihood 4 &times; Impact 5 = 20 <span class="pill crit">Critical</span></td></tr>
 <tr><th>Residual if the control passes its tests</th><td>Likelihood 2 &times; Impact 5 = 10 <span class="pill med">Medium</span></td></tr>
 <tr><th>Residual if untested, failing or stale</th><td>Stays at 20 <span class="pill crit">Critical</span></td></tr>
@@ -63,7 +63,7 @@ footer{max-width:860px;margin:0 auto;padding:24px 20px 48px;color:var(--muted);f
 <h2>Implemented Python controls</h2>
 <p>Requirements become checks.</p>
 <h3>Gate on purpose</h3>
-<p>Every read of the data goes through one gate. It denies by default and allows a read only when the stated purpose is on the permitted list, the user's consent covers that purpose, and the consent has not expired. Purposes are matched exactly, so <code>" navigation"</code> and <code>"Navigation"</code> are refused.</p>
+<p>Every agent tool call that reads the data goes through one gate. It denies by default and allows a read only when the stated purpose is on the permitted list, the user's consent covers that purpose, and the consent has not expired. Purposes are matched exactly, so <code>" navigation"</code> and <code>"Navigation"</code> are refused.</p>
 <h3>Rate from evidence</h3>
 <p>The residual rating is computed from the test results and the age of the evidence. With no evidence, or a failed dimension, or stale evidence, the residual rating equals the inherent rating.</p>
 <h3>Record the outcome</h3>
@@ -84,7 +84,7 @@ footer{max-width:860px;margin:0 auto;padding:24px 20px 48px;color:var(--muted);f
 
 <h2>Simulation</h2>
 <p>Send 32 requests. Count the leaks.</p>
-<p>A fixed stream of 32 synthetic requests (8 purposes against 4 consent states) runs three ways. A leak is a read that was allowed although it should have been refused.</p>
+<p>A fixed stream of 32 synthetic requests (8 purposes against 4 consent states) runs three ways. A leak is a tool call that was allowed although it should have been refused.</p>
 <div class="tbl"><table>
 <tr><th>Configuration</th><th>Allowed</th><th>Blocked</th><th>Leaks</th></tr>
 <tr><td>Purpose gate</td><td>3</td><td>29</td><td>0</td></tr>
@@ -121,6 +121,7 @@ footer{max-width:860px;margin:0 auto;padding:24px 20px 48px;color:var(--muted);f
 <p>What this evidence establishes.</p>
 <p>The results establish tested behavior in a synthetic, single-process implementation. They show that this gate behaves as specified on the scenarios written for it.</p>
 <p>They do not establish how often real misuse occurs, so the simulation supports the effectiveness rating and cannot set the likelihood. They do not establish that no other code path reads the data, authenticated human review (the reviewer is a role name, not an identity), production isolation, concurrent execution, tamper-resistant logging, or independent assurance. The hash chain detects alteration; it does not prevent it.</p>
+<p>The gate checks the purpose it is given. It does not show that an agent states its purpose truthfully. In a real system the orchestrator, not the model, should set the purpose.</p>
 <p>Conclusion strength must not exceed evidence strength.</p>
 
 <h2>About this work</h2>
