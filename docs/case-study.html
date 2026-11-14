@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engineering AI Governance: Testing Whether the Control Works</title>
+<meta name="description" content="A practitioner case study: rate a risk, test the control, let the evidence set the residual rating, and keep the conclusion within the evidence.">
+<style>
+:root{--bg:#0A1626;--panel:#0F2236;--line:#23476E;--text:#E3EBF5;--muted:#B4C3D6;--gold:#F2B84B;--green:#2E9E6B;--yellow:#F2D04B;--red:#E0463E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--gold)}a:hover{color:#fff}
+main{max-width:860px;margin:0 auto;padding:0 20px 64px}
+header.mast{max-width:860px;margin:0 auto;padding:28px 20px 0;color:var(--muted);font-size:14px}
+.label{letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:var(--gold);margin:0}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(32px,6vw,52px);line-height:1.12;margin:12px 0}
+h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(25px,4vw,34px);line-height:1.2;margin:56px 0 12px}
+h3{font-size:19px;margin:28px 0 6px;color:var(--gold)}
+.sub{font-size:20px;color:var(--muted);margin:0 0 20px}
+.by{color:var(--muted);font-size:15px}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}
+.btn{display:inline-block;padding:12px 20px;border-radius:999px;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-weight:600;min-height:44px}
+.btn:hover{background:var(--gold);color:var(--bg)}
+table{border-collapse:collapse;width:100%;margin:16px 0;background:var(--panel);font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{color:var(--gold);font-weight:600}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
+code{background:var(--panel);padding:1px 6px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--line);padding:14px;overflow-x:auto;border-radius:8px}
+.tbl{overflow-x:auto}
+ol.steps{padding-left:22px}ol.steps li{margin:8px 0}
+.pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:14px;font-weight:700;color:#0A1626}
+.crit{background:var(--red)}.med{background:var(--yellow)}
+blockquote{margin:40px 0 8px;border-left:3px solid var(--gold);padding:4px 0 4px 20px;font-family:Georgia,serif;font-size:24px;font-style:italic}
+footer{max-width:860px;margin:0 auto;padding:24px 20px 48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+.note{color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<header class="mast">BridgeCore AI &middot; Publications</header>
+<main>
+<p class="label">Publications &middot; Practitioner case study</p>
+<h1>Engineering AI Governance: Testing Whether the Control Works</h1>
+<p class="sub">Rate the risk. Test the control. Let the evidence set the residual rating. Keep the conclusion within the evidence.</p>
+<p class="by">Grace Adjeli &middot; BridgeCore AI<br>Synthetic demonstrator &middot; Python baseline, tested on 3.10 and 3.12</p>
+<div class="btns">
+<a class="btn" href="../sim/index.html">Explore the browser illustration</a>
+<a class="btn" href="#evidence">Read the test evidence</a>
+</div>
+
+<h2>The problem</h2>
+<p>The control existed. The misuse still got through.</p>
+<p>A purpose limitation gate for precise geolocation data can look complete: consent is recorded, the check runs, the policy is approved. In the defective fixture, the gate confirms that consent exists and never checks the purpose of the read. A marketing request with valid consent passes. A review that only asks whether a control is present would approve it.</p>
+<p>That matters because residual risk is often rated from the control's documentation or maturity. This case study rates one scenario, then tests the control, so the residual rating depends on what the test shows.</p>
+<div class="tbl"><table>
+<tr><th>Scenario GEO-001</th><td>Precise geolocation data collected for navigation is used for a purpose the user did not consent to, for example marketing.</td></tr>
+<tr><th>Inherent risk</th><td>Likelihood 4 &times; Impact 5 = 20 <span class="pill crit">Critical</span></td></tr>
+<tr><th>Residual if the control passes its tests</th><td>Likelihood 2 &times; Impact 5 = 10 <span class="pill med">Medium</span></td></tr>
+<tr><th>Residual if untested, failing or stale</th><td>Stays at 20 <span class="pill crit">Critical</span></td></tr>
+</table></div>
+<p class="note">The ratings are illustrative. The method and the tests are real. The likelihood reduction rule is a recorded judgment, not a derived value: likelihood drops two levels only if the design, implementation and operation tests all pass and the evidence is under 90 days old.</p>
+
+<h2>Implemented Python controls</h2>
+<p>Requirements become checks.</p>
+<h3>Gate on purpose</h3>
+<p>Every read of the data goes through one gate. It denies by default and allows a read only when the stated purpose is on the permitted list, the user's consent covers that purpose, and the consent has not expired. Purposes are matched exactly, so <code>" navigation"</code> and <code>"Navigation"</code> are refused.</p>
+<h3>Rate from evidence</h3>
+<p>The residual rating is computed from the test results and the age of the evidence. With no evidence, or a failed dimension, or stale evidence, the residual rating equals the inherent rating.</p>
+<h3>Record the outcome</h3>
+<p>Each run writes a dated evidence record: what was tested, when, by whom, and under what conditions. Decision logs are hash-chained, so altering one entry breaks verification.</p>
+
+<h2>Architecture</h2>
+<p>From risk scenario to recorded decision.</p>
+<ol class="steps">
+<li><strong>Risk scenario.</strong> GEO-001 is defined with an owner, a tolerance and reassessment triggers.</li>
+<li><strong>Inherent rating.</strong> Likelihood &times; impact, with the rationale written down.</li>
+<li><strong>Control gate.</strong> The purpose limitation gate is the only path to the data.</li>
+<li><strong>Control tests.</strong> Design, implementation and operation, including misuse and spoofed purposes.</li>
+<li><strong>Evidence record.</strong> Results, conditions, commit and a SHA256 manifest.</li>
+<li><strong>Residual rating.</strong> Computed from the evidence, with the rationale recorded.</li>
+<li><strong>Bounded recovery.</strong> If a defect is found, the claim is invalidated and restored only under recorded conditions.</li>
+</ol>
+<p>The risk owner, here a Chief Privacy Officer role, decides whether to treat, monitor or accept the residual risk.</p>
+
+<h2>Simulation</h2>
+<p>Send 32 requests. Count the leaks.</p>
+<p>A fixed stream of 32 synthetic requests (8 purposes against 4 consent states) runs three ways. A leak is a read that was allowed although it should have been refused.</p>
+<div class="tbl"><table>
+<tr><th>Configuration</th><th>Allowed</th><th>Blocked</th><th>Leaks</th></tr>
+<tr><td>Purpose gate</td><td>3</td><td>29</td><td>0</td></tr>
+<tr><td>Defective fixture (checks consent exists, not purpose)</td><td>16</td><td>16</td><td>13</td></tr>
+<tr><td>No control</td><td>32</td><td>0</td><td>29</td></tr>
+</table></div>
+<p>The defective fixture is an educational omitted-check example, not a historical production incident. The browser illustration is a separate JavaScript page that does not call the Python code and keeps everything in page memory.</p>
+
+<h2 id="evidence">Verified Python evidence</h2>
+<p>42 tests. A specific commit. A recorded run.</p>
+<div class="tbl"><table>
+<tr><th>Item</th><th>Recorded value</th></tr>
+<tr><td>Test suite</td><td>42 tests (control, rating, simulation and recovery)</td></tr>
+<tr><td>CI run</td><td>GitHub Actions run 43538941430, attempt 1, on <code>main</code></td></tr>
+<tr><td>Commit</td><td><code>4c1aa8e4d8a59a8fccd3df5b119449840788d556</code></td></tr>
+<tr><td>Result</td><td>Passed on Python 3.10 and Python 3.12</td></tr>
+<tr><td>Committed evidence record</td><td><code>evidence/evidence-20261113T155506Z.json</code>, 37 grouped tests (design, implementation, operation, recovery), all passing. Recorded from a local sandbox run on Python 3.13 against commit <code>bb231ac</code>, not from CI.</td></tr>
+<tr><td>Evidence SHA256</td><td><code>c3b74131f2e4904439d66a6a743bb7c2fa57aec9cad6022da732edc9620d7517</code>, matching its manifest</td></tr>
+<tr><td>Recovery ledger</td><td><code>evidence/recovery-20261114T010550Z.json</code>, SHA256 <code>dddb8a9eef0333d9b7660cbb0238e743213970e12eb24284a3738bf0b3dbaec3</code>, hash chain verified</td></tr>
+</table></div>
+<p class="note">These are fixed records of the stated runs, not continuously updated assurance. The CI run and the committed evidence files are different runs: the CI run covers the commit shown, and the committed files were produced locally.</p>
+
+<h2>Failure and recovery</h2>
+<p>A successful rerun is not enough.</p>
+<div class="tbl"><table>
+<tr><th>Recorded state</th><th>What happened</th></tr>
+<tr><td><code>INVALIDATED</code></td><td>The defective fixture leaked 13 of 32 requests, so the claim "residual risk is 10 (Medium)" is invalidated and bound to the SHA256 of the defective source.</td></tr>
+<tr><td><code>CORRECTED_PENDING_RETEST</code></td><td>The corrected gate is bound to its own SHA256, which must differ from the defective source.</td></tr>
+<tr><td><code>PENDING_REVIEW</code></td><td>The same recorded 32-request condition is retested against the same corrected version, and the regression suite passes. A different version, a different condition, a failed regression or a new failure stops here.</td></tr>
+<tr><td><code>RESTORED_BOUNDED</code></td><td>A simulated designated reviewer (the Chief Privacy Officer role) restores only the recorded claim. Restoration does not authorize the next read.</td></tr>
+</table></div>
+
+<h2>Scope and limitations</h2>
+<p>What this evidence establishes.</p>
+<p>The results establish tested behavior in a synthetic, single-process implementation. They show that this gate behaves as specified on the scenarios written for it.</p>
+<p>They do not establish how often real misuse occurs, so the simulation supports the effectiveness rating and cannot set the likelihood. They do not establish that no other code path reads the data, authenticated human review (the reviewer is a role name, not an identity), production isolation, concurrent execution, tamper-resistant logging, or independent assurance. The hash chain detects alteration; it does not prevent it.</p>
+<p>Conclusion strength must not exceed evidence strength.</p>
+
+<h2>About this work</h2>
+<p>This case study accompanies the article on moving from inherent risk to residual risk. It builds on <a href="https://graceadjeli.substack.com/p/inherent-risk-is-not-a-maturity-score">Inherent Risk Is Not a Maturity Score</a>, and the code is in the BridgeCoreAI residual-risk-case repository.</p>
+
+<blockquote>Governance is not what is defined. It is what is enforced at execution.</blockquote>
+<p class="by">Grace Adjeli &middot; BridgeCore AI</p>
+</main>
+<footer>&copy; BridgeCore AI LLC. Code is released under the MIT license; this page and its images are all rights reserved.</footer>
+</body>
+</html>
