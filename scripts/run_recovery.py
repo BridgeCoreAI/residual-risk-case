@@ -1,6 +1,6 @@
 """Run the recovery sequence end to end and write a hash-chained ledger plus a SHA256 manifest.
 
-Usage: python scripts/run_recovery.py [--reviewer risk-owner] [--out evidence]
+Usage: python scripts/run_recovery.py [--reviewer chief-privacy-officer] [--out evidence]
 The reviewer is a simulated role name, not an authenticated identity.
 """
 import argparse, hashlib, json, subprocess, sys
@@ -24,7 +24,7 @@ def regression():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--reviewer", default="risk-owner")
+    ap.add_argument("--reviewer", default="chief-privacy-officer")
     ap.add_argument("--out", default="evidence")
     args = ap.parse_args()
 
