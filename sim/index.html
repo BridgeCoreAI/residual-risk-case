@@ -31,9 +31,9 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
 </select></label>
 </div>
 
-<h2>2. Send a read request</h2>
+<h2>2. Send an agent tool call</h2>
 <div class="row">
-<label>Stated purpose
+<label>Agent's stated purpose
 <select id="purpose">
 <option>navigation</option><option>fraud_prevention</option><option>marketing</option>
 <option>analytics</option><option>ad_targeting</option><option value="">(missing)</option>
@@ -88,7 +88,7 @@ function add(p, ck){
     if (i === 3) td.className = ok ? "ok" : "no"; tr.appendChild(td);
   });
   document.getElementById("log").appendChild(tr);
-  document.getElementById("summary").textContent = n + " requests, " + allowed + " allowed, " + (n - allowed) + " blocked, " + leaks + " leaked (allowed but should have been refused).";
+  document.getElementById("summary").textContent = n + " requests, " + allowed + " allowed, " + (n - allowed) + " blocked, " + leaks + " leaked (a tool call allowed although it should have been refused).";
 }
 document.getElementById("send").onclick = () => add(document.getElementById("purpose").value, document.getElementById("consent").value);
 document.getElementById("all").onclick = () => { for (const ck of Object.keys(CONSENTS)) for (const p of PURPOSES) add(p, ck); };

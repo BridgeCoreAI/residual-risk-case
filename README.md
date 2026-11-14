@@ -4,7 +4,7 @@ I built this repo to show one thing. A risk register can say "Medium" while the 
 
 In my AI governance work, I often see residual risk rated from a control's documentation or maturity. A control can be approved, documented and well run, and still fail against the exact misuse the risk describes. When that happens, nobody can say what the rating rests on.
 
-So I took one scenario, precise geolocation data used beyond its permitted purpose, and did what I think the rating should require. I rated the inherent risk (20, Critical), tested the control for design, implementation and operation, and computed the residual risk from the results. If the tests pass with current evidence, it drops to 10 (Medium). If the control is untested, failing or stale, it stays at 20.
+So I took one agentic AI scenario, an AI agent reading precise geolocation data for a purpose the user never consented to, and did what I think the rating should require. I rated the inherent risk (20, Critical), tested the control for design, implementation and operation, and computed the residual risk from the results. If the tests pass with current evidence, it drops to 10 (Medium). If the control is untested, failing or stale, it stays at 20.
 
 The ratings are illustrative. The method and the tests are real.
 
@@ -68,7 +68,7 @@ A control claim should not stay valid because it once passed. `src/recovery.py` 
 Weakening the gate (removing the permitted-purpose check) makes the operation tests fail and the residual stays 20. The recovery tests also cover premature restoration, a wrong reviewer, a wrong version, a wrong condition and a new failure. The rating cannot improve without passing evidence.
 
 ## Limits
-The simulation covers scenarios written for this gate; it does not measure how often real misuse occurs, so it supports the effectiveness rating but cannot set likelihood. Single process, synthetic data, trusted inputs (purpose, consent, clock), in-memory logs, and no independent assurance.
+The simulation covers scenarios written for this gate; it does not measure how often real misuse occurs, so it supports the effectiveness rating but cannot set likelihood. Single process, synthetic data, trusted inputs (purpose, consent, clock), in-memory logs, and no independent assurance. The gate checks the purpose it is given; it does not show that an agent states its purpose truthfully. In a real system the orchestrator, not the model, should set the purpose.
 
 Ratings are illustrative. Synthetic data only. Tests show this gate behaves as specified; they do not prove no other code path reads the data. The risk owner decides treat, monitor or accept.
 
