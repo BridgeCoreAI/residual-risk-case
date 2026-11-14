@@ -25,7 +25,7 @@ CLAIM = {
     "condition": "Fixed synthetic stream of 32 requests, zero leaks and zero over-blocks.",
     "stream_size": 32,
 }
-DESIGNATED_REVIEWERS = {"risk-owner"}
+DESIGNATED_REVIEWERS = {"chief-privacy-officer"}
 BOUNDS = "Restores only the recorded claim. It does not authorize any future read; each read needs its own gate decision."
 
 

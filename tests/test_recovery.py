@@ -31,7 +31,7 @@ def at_pending_review():
 
 def test_recovery_full_sequence_reaches_bounded_restore():
     r = at_pending_review()
-    r.restore("risk-owner")
+    r.restore("chief-privacy-officer")
     assert r.state == "RESTORED_BOUNDED"
     assert [e["event"] for e in r.events] == ["claim_invalidated", "correction_recorded", "retest_passed", "claim_restored_bounded"]
     assert "does not authorize any future read" in r.events[-1]["bounds"]
@@ -39,7 +39,7 @@ def test_recovery_full_sequence_reaches_bounded_restore():
 
 def test_recovery_ledger_chain_verifies_and_detects_tampering():
     r = at_pending_review()
-    r.restore("risk-owner")
+    r.restore("chief-privacy-officer")
     led = r.ledger()
     assert verify_chain(led)
     t = [dict(e) for e in led]
@@ -74,7 +74,7 @@ def test_recovery_failed_regression_blocks_progress():
     assert r.retest(CORRECTED, Gate(), regression_passed=False) is False
     assert r.state == "CORRECTED_PENDING_RETEST"
     with pytest.raises(RecoveryError, match="premature"):
-        r.restore("risk-owner")
+        r.restore("chief-privacy-officer")
 
 
 def test_recovery_new_failure_returns_to_invalidated():
@@ -86,7 +86,7 @@ def test_recovery_new_failure_returns_to_invalidated():
 @pytest.mark.parametrize("build", [lambda: Recovery(), at_invalidated, at_corrected])
 def test_recovery_premature_restoration_refused(build):
     with pytest.raises(RecoveryError, match="premature"):
-        build().restore("risk-owner")
+        build().restore("chief-privacy-officer")
 
 
 def test_recovery_wrong_reviewer_refused():
