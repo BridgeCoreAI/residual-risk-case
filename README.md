@@ -74,6 +74,7 @@ Ratings are illustrative. Synthetic data only. Tests show this gate behaves as s
 
 ## Related
 
+- Case study page: [docs/case-study.html](docs/case-study.html), a practitioner write-up of this repo following the same evidence rules (open it in a browser; GitHub shows the source).
 - Article: From Inherent Risk to Residual Risk (Governance at Execution, Substack and LinkedIn).
 - Part 1 of the series, how organizations determine inherent risk, which is where the starting rating of 20 comes from:
 
