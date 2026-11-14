@@ -74,7 +74,7 @@ Ratings are illustrative. Synthetic data only. Tests show this gate behaves as s
 
 ## Related
 
-- Case study page: [docs/case-study.html](docs/case-study.html), a practitioner write-up of this repo following the same evidence rules (open it in a browser; GitHub shows the source).
+- Case study page: [Engineering AI Governance: From Inherent Risk to Residual Risk](https://bridgecore-ai.com/ai-governance-residual-risk.html), a practitioner write-up of this repo with an interactive example, published on the BridgeCore AI website. The same page is kept in this repo as [docs/case-study.html](docs/case-study.html) (GitHub shows the source; open it in a browser to read it).
 - Article: From Inherent Risk to Residual Risk (Governance at Execution, Substack and LinkedIn).
 - Part 1 of the series, how organizations determine inherent risk, which is where the starting rating of 20 comes from:
 
