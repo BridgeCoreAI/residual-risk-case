@@ -1,12 +1,12 @@
 {
   "scenario_id": "GEO-001",
-  "control": "Purpose limitation gate on all reads of precise geolocation",
-  "tested_at": "2026-11-13T15:55:06.116924+00:00",
-  "tested_by": "Claude (local sandbox run, requested by Grace Adjeli)",
+  "control": "Purpose limitation gate on every agent tool call that reads precise geolocation",
+  "tested_at": "2026-11-16T03:18:50.807372+00:00",
+  "tested_by": "Grace Adjeli",
   "conditions": {
-    "commit": "bb231ac7a67fbb98c7ca0f31063a47b0be4354f8",
-    "python": "3.13.18",
-    "platform": "Linux-6.18.44-fc-v445-x86_64-with-glibc2.39",
+    "commit": "65c044b274d2c84b72cb9e4b477f589fd45e1ecf",
+    "python": "3.14.6",
+    "platform": "macOS-26.6.2-x86_64-i386-64bit-Mach-O",
     "environment": "local",
     "data": "synthetic records only; fixed clock 2026-11-13T12:00Z for time-based tests",
     "ci_run": "not a CI run",
